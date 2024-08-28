@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/main/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "builder": "swc",
+    "tsConfigPath": "apps/main/tsconfig.app.json",
+    "plugins": ["@nestjs/swagger/plugin"],
+    "assets": [
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true,
+        "outDir": "dist/apps/main"
+      }
+    ]
+  },
+  "monorepo": true,
+  "root": "apps/main",
+  "projects": {
+    "main": {
+      "type": "application",
+      "root": "apps/main",
+      "entryFile": "main",
+      "sourceRoot": "apps/main/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/main/tsconfig.app.json"
+      }
+    },
+    "core": {
+      "type": "library",
+      "root": "apps/core",
+      "entryFile": "index",
+      "sourceRoot": "apps/core/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/core/tsconfig.lib.json"
+      }
+    },
+    "ui": {
+      "type": "library",
+      "root": "apps/ui",
+      "entryFile": "index",
+      "sourceRoot": "apps/ui/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ui/tsconfig.lib.json"
+      }
+    },
+    "coreDashboard": {
+      "type": "library",
+      "root": "apps/core-dashboard",
+      "entryFile": "index",
+      "sourceRoot": "apps/core-dashboard/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/core-dashboard/tsconfig.lib.json"
+      }
+    },
+    "discountCoffe": {
+      "type": "library",
+      "root": "apps/discount-coffe",
+      "entryFile": "index",
+      "sourceRoot": "apps/discount-coffe/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/discountCoffe/tsconfig.lib.json"
+      }
+    },
+    "pcm": {
+      "type": "library",
+      "root": "apps/pcm",
+      "entryFile": "index",
+      "sourceRoot": "apps/pcm/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/pcm/tsconfig.lib.json"
+      }
+    },
+    "eav": {
+      "type": "library",
+      "root": "apps/eav",
+      "entryFile": "index",
+      "sourceRoot": "apps/eav/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/eav/tsconfig.lib.json"
+      }
+    },
+    "e-commerce": {
+      "type": "library",
+      "root": "apps/e-commerce",
+      "entryFile": "index",
+      "sourceRoot": "apps/e-commerce/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/e-commerce/tsconfig.lib.json"
+      }
+    },
+    "file": {
+      "type": "library",
+      "root": "libs/file",
+      "entryFile": "index",
+      "sourceRoot": "libs/file/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/file/tsconfig.lib.json"
+      }
+    },
+    "thumbnail": {
+      "type": "library",
+      "root": "libs/thumbnail",
+      "entryFile": "index",
+      "sourceRoot": "libs/thumbnail/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/thumbnail/tsconfig.lib.json"
+      }
+    },
+    "database": {
+      "type": "library",
+      "root": "libs/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/database/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
+      }
+    },
+    "http-exception-filter": {
+      "type": "library",
+      "root": "libs/http-exception-filter",
+      "entryFile": "index",
+      "sourceRoot": "libs/http-exception-filter/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/http-exception-filter/tsconfig.lib.json"
+      }
+    },
+    "logger": {
+      "type": "library",
+      "root": "libs/logger",
+      "entryFile": "index",
+      "sourceRoot": "libs/logger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/logger/tsconfig.lib.json"
+      }
+    },
+    "auth": {
+      "type": "library",
+      "root": "libs/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+      }
+    },
+    "permission-checker": {
+      "type": "library",
+      "root": "libs/permission-checker",
+      "entryFile": "index",
+      "sourceRoot": "libs/permission-checker/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/permission-checker/tsconfig.lib.json"
+      }
+    },
+    "response": {
+      "type": "library",
+      "root": "libs/response",
+      "entryFile": "index",
+      "sourceRoot": "libs/response/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/response/tsconfig.lib.json"
+      }
+    },
+    "query-filter": {
+      "type": "library",
+      "root": "libs/query-filter",
+      "entryFile": "index",
+      "sourceRoot": "libs/query-filter/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/query-filter/tsconfig.lib.json"
+      }
+    },
+    "pay": {
+      "type": "library",
+      "root": "libs/pay",
+      "entryFile": "index",
+      "sourceRoot": "libs/pay/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/pay/tsconfig.lib.json"
+      }
+    },
+    "commonmiddleware": {
+      "type": "library",
+      "root": "libs/commonmiddleware",
+      "entryFile": "index",
+      "sourceRoot": "libs/commonmiddleware/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/commonmiddleware/tsconfig.lib.json"
+      }
+    },
+    "redis-client": {
+      "type": "library",
+      "root": "libs/redis-client",
+      "entryFile": "index",
+      "sourceRoot": "libs/redis-client/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis-client/tsconfig.lib.json"
+      }
+    },
+    "commontools": {
+      "type": "library",
+      "root": "libs/commontools",
+      "entryFile": "index",
+      "sourceRoot": "libs/commontools/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/commontools/tsconfig.lib.json"
+      }
+    },
+    "minio-client": {
+      "type": "library",
+      "root": "libs/minio-client",
+      "entryFile": "index",
+      "sourceRoot": "libs/minio-client/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/minio-client/tsconfig.lib.json"
+      }
+    },
+    "sms": {
+      "type": "library",
+      "root": "libs/sms",
+      "entryFile": "index",
+      "sourceRoot": "libs/sms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sms/tsconfig.lib.json"
+      }
+    },
+    "neka": {
+      "type": "library",
+      "root": "apps/neka",
+      "entryFile": "index",
+      "sourceRoot": "apps/neka/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/neka/tsconfig.lib.json"
+      }
+    }
+  }
+}
