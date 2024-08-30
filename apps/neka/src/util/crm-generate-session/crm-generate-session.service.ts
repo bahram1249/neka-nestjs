@@ -15,6 +15,7 @@ export class CrmGenerateSessionService {
     const prefixAuthToken = this.config.get<string>('PREFIX_AUTH_TOKEN');
     const accessKey = md5(token + prefixAuthToken);
     const response = await axios.post(`https://neka.crm24.io/webservice.php`, {
+      operation: 'login',
       username: username,
       token: token,
       accessKey: accessKey,
