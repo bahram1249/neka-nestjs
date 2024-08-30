@@ -10,7 +10,6 @@ import {
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from './userRole.entity';
-import { Attachment } from './attachment.entity';
 import { Role } from './role.entity';
 import { AutoMap } from 'automapper-classes';
 //import { AutoMap } from '@automapper/classes';
@@ -115,11 +114,7 @@ export class User extends Model {
     allowNull: true,
   })
   profilePhotoAttachmentId?: bigint;
-  @BelongsTo(() => Attachment, {
-    as: 'profileAttachment',
-    foreignKey: 'profilePhotoAttachmentId',
-  })
-  profileAttachment?: Attachment;
+
   @HasMany(() => UserRole)
   userRoles: UserRole[];
   @BelongsToMany(() => Role, () => UserRole)
