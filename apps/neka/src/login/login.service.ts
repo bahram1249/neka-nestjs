@@ -1,28 +1,23 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { LoginDto } from './dto';
-import { CrmTokenService } from '../util/crm-token/crm-token.service';
-import { CrmGenerateSessionService } from '../util/crm-generate-session/crm-generate-session.service';
 import { AuthService } from './auth.service';
+import { CrmContactService } from '../util/crm-contact/crm-contact.service';
 
 @Injectable()
 export class LoginService {
   constructor(
-    private readonly tokenService: CrmTokenService,
-    private readonly sessionService: CrmGenerateSessionService,
     private readonly authService: AuthService,
+    private readonly contactService: CrmContactService,
   ) {}
 
   async login(dto: LoginDto) {
-    const crmToken = await this.tokenService.getToken(dto.username);
-    const session = await this.sessionService.generateSession(
-      dto.username,
-      crmToken,
-    );
-    if (!session.result) {
-      throw new BadRequestException('cannot register');
+    const user = await this.contactService.findUser(dto.username, dto.password);
+    if (!user) {
+      throw new BadRequestException('invalid credentials');
     }
+    const token = await this.authService.signToken(user);
     return {
-      result: await this.authService.signToken(dto.username, session),
+      result: token,
     };
   }
 }

@@ -1,7 +1,3 @@
-export interface IUser {
-  username: string;
-  sessionName: string;
-  userId: string;
-  version: string;
-  vtigerVersion: string;
-}
+import { CrmContactResultInterface } from '@rahino/neka/util/crm-contact/interface';
+
+export type IUser = CrmContactResultInterface;
