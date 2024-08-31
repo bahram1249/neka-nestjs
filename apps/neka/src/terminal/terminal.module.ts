@@ -7,5 +7,6 @@ import { CrmTerminalModule } from '../util/crm-terminal/crm-terminal.module';
   imports: [CrmTerminalModule],
   controllers: [TerminalController],
   providers: [TerminalService],
+  exports: [TerminalService],
 })
 export class TerminalModule {}
