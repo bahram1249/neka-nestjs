@@ -7,7 +7,7 @@ export class CrmContactService {
 
   async getCurrentSession(sessionName: string) {
     const response = await axios.get(
-      `https://neka.crm24.io/webservice.php?operation=query&sessionName=${sessionName}&query=SELECT TOP 100 * FROM Contacts'`,
+      `https://neka.crm24.io/webservice.php?operation=query&sessionName=${sessionName}&query=SELECT * FROM Contacts;'`,
     );
     return response.data;
   }
