@@ -6,9 +6,10 @@ import {
 } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoginModule } from './login/login.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
-  imports: [LoginModule],
+  imports: [LoginModule, ContactModule],
 })
 export class NekaModule implements NestModule {
   constructor() {}
