@@ -31,6 +31,9 @@ export class DeltasibTokenService {
       },
       {
         httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       },
     );
     const data = response.data as DeltaSibTokenResponse;

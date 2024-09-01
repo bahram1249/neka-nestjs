@@ -10,10 +10,11 @@ export class DeltasibCreditInfoService {
   async findCreditInfo(terminalSim: string) {
     const token = await this.deltasibTokenService.getToken();
     const response = await axios.get(
-      `https://185.126.8.124:1043/1.0/user/?Action=creditinfo&User_Id=0&filter=Username=${terminalSim}`,
+      `https://185.126.8.124:1043/1.0/user/?Action=creditinfo&User_Id=0&filter=Username= ${terminalSim} `,
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'form-data',
         },
         httpsAgent: new https.Agent({ rejectUnauthorized: false }),
       },
