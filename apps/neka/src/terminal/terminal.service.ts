@@ -4,11 +4,11 @@ import { CrmTerminalService } from '../util/crm-terminal/crm-terminal.service';
 
 @Injectable()
 export class TerminalService {
-  constructor(private readonly contactService: CrmTerminalService) {}
+  constructor(private readonly terminalService: CrmTerminalService) {}
 
   async getAll(user: IUser) {
     return {
-      result: await this.contactService.getTerminals(user),
+      result: await this.terminalService.getTerminals(user),
     };
   }
 }
