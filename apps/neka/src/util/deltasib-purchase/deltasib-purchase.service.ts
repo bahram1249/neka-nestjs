@@ -3,9 +3,11 @@ import { DeltasibTokenService } from '../deltasib-token/deltasib-token.service';
 import axios from 'axios';
 import * as https from 'https';
 import {
+  DeltasibAddPurchaseResponseInterface,
   DeltasibPurchaseResponseInterface,
   DeltasibPurchaseResultInterface,
 } from './interface';
+import { PurchaseDto } from './dto';
 
 @Injectable()
 export class DeltasibPurchaseService {
@@ -46,5 +48,21 @@ export class DeltasibPurchaseService {
       vat: x.VAT,
       visibility: x.Visibility,
     }));
+  }
+
+  async add(dto: PurchaseDto): Promise<DeltasibAddPurchaseResponseInterface> {
+    const token = await this.deltasibTokenService.getToken();
+    const response = await axios.post(
+      `'https://185.126.8.124:1043/1.0/user.service.base/`,
+      dto,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+      },
+    );
+    return response.data as DeltasibAddPurchaseResponseInterface;
   }
 }
