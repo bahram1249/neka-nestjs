@@ -5,6 +5,5 @@ export interface DescribeCrmTerminalResultInterface {
   terminalSim: string;
   operatorName: operator;
   userId: string;
-  deltasibAccountId: string;
   terminalType: string;
 }

@@ -19,10 +19,7 @@ export class PurchaseService {
       throw new NotFoundException('cannot find terminal sim');
     }
     return {
-      result: await this.deltasibPurchaseService.getAll(
-        terminal.terminalSim,
-        terminal.deltasibAccountId,
-      ),
+      result: await this.deltasibPurchaseService.getAll(terminal.terminalSim),
     };
   }
 }

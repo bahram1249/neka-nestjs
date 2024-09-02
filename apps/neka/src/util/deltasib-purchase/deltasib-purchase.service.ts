@@ -13,7 +13,6 @@ export class DeltasibPurchaseService {
 
   async getAll(
     terminalSim: string,
-    deltaSibAccountId: string,
   ): Promise<DeltasibPurchaseResultInterface[]> {
     const token = await this.deltasibTokenService.getToken();
     const response = await axios.get(
