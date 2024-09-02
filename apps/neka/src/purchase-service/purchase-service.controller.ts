@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,6 +15,7 @@ import { GetUser } from '@rahino/auth/decorator';
 import { IUser } from '@rahino/auth/interface';
 import { JsonResponseTransformInterceptor } from '@rahino/response/interceptor';
 import { JwtGuard } from '@rahino/auth/guard';
+import { PurchaseServiceDto } from './dto';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -31,5 +34,11 @@ export class PurchaseServiceController {
     @GetUser() user: IUser,
   ) {
     return await this.service.getByTerminalSim(terminalSim, user);
+  }
+
+  @Post('/buy')
+  @HttpCode(HttpStatus.OK)
+  async buy(@GetUser() user: IUser, @Body() dto: PurchaseServiceDto) {
+    return await this.service.buy(user, dto);
   }
 }

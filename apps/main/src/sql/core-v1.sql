@@ -66,5 +66,127 @@ END
 
 GO
 
--- Datas
+IF NOT EXISTS ((SELECT 1 FROM Migrations WHERE version = 'factorstatuses-v1' 
+					
+			))
+	AND EXISTS (
+		SELECT 1 FROM Settings WHERE ([key] = 'SITE_NAME' AND [value] IN ('neka'))
+	)
+BEGIN
+
+	CREATE Table FactorStatuses
+	(
+		id							int										PRIMARY KEY,
+		title						nvarchar(256)							NULL,
+		createdAt					datetimeoffset							NOT NULL,
+		updatedAt					datetimeoffset							NOT NULL,
+	);
+
+	INSERT INTO FactorStatuses(id, title, createdAt, updatedAt)
+	VALUES (1, N'در انتظار پرداخت', getdatE(), getdate())
+		,(2, N'پرداخت شده', getdatE(), getdate())
+
+	INSERT INTO Migrations(version, createdAt, updatedAt)
+	SELECT 'factorstatuses-v1', GETDATE(), GETDATE()
+END
+
+GO
+
+
+IF NOT EXISTS ((SELECT 1 FROM Migrations WHERE version = 'factors-v1' 
+					
+			))
+	AND EXISTS (
+		SELECT 1 FROM Settings WHERE ([key] = 'SITE_NAME' AND [value] IN ('neka'))
+	)
+BEGIN
+
+	CREATE Table Factors
+	(
+		id							bigint identity(1,1)					PRIMARY KEY,
+		crmUserId					nvarchar(256)							NOT NULL,
+		firstname					nvarchar(256)							NULL,
+		lastname					nvarchar(256)							NULL,
+		terminalSim					nvarchar(256)							NOT NULL,
+		deltasibUserId				nvarchar(256)							NULL,
+		price						bigint									NOT NULL,
+		deltasibServiceId			nvarchar(256)							NOT NULL,
+		deltasibServiceName			nvarchar(256)							NULL,
+		deltasibServiceDescription	nvarchar(256)							NULL,
+		factorStatusId				int										NOT NULL
+			CONSTRAINT FK_Factors_FactorStatusId
+				FOREIGN KEY REFERENCES FactorStatuses(id),
+		createdAt					datetimeoffset							NOT NULL,
+		updatedAt					datetimeoffset							NOT NULL,
+	);
+
+	INSERT INTO Migrations(version, createdAt, updatedAt)
+	SELECT 'factors-v1', GETDATE(), GETDATE()
+END
+
+GO
+
+
+IF NOT EXISTS ((SELECT 1 FROM Migrations WHERE version = 'paymentstatuses-v1' 
+					
+			))
+	AND EXISTS (
+		SELECT 1 FROM Settings WHERE ([key] = 'SITE_NAME' AND [value] IN ('neka'))
+	)
+BEGIN
+
+	CREATE Table PaymentStatuses
+	(
+		id							int										PRIMARY KEY,
+		title						nvarchar(256)							NULL,
+		createdAt					datetimeoffset							NOT NULL,
+		updatedAt					datetimeoffset							NOT NULL,
+	);
+
+	INSERT INTO PaymentStatuses(id, title, createdAt, updatedAt)
+	VALUES (1, N'در انتظار پرداخت', getdatE(), getdate())
+		,(2, N'پرداخت ناموفق', getdatE(), getdate())
+		,(3, N'پرداخت موفق', getdatE(), getdate())
+		,(4, N'وجه بازگشتی', getdatE(), getdate())
+
+	INSERT INTO Migrations(version, createdAt, updatedAt)
+	SELECT 'paymentstatuses-v1', GETDATE(), GETDATE()
+END
+
+GO
+
+
+IF NOT EXISTS ((SELECT 1 FROM Migrations WHERE version = 'payments-v1' 
+					
+			))
+	AND EXISTS (
+		SELECT 1 FROM Settings WHERE ([key] = 'SITE_NAME' AND [value] IN ('neka'))
+	)
+BEGIN
+
+	CREATE Table Payments
+	(
+		id							bigint identity(1,1)					PRIMARY KEY,
+		crmUserId					nvarchar(256)							NOT NULL,
+		firstname					nvarchar(256)							NULL,
+		lastname					nvarchar(256)							NULL,
+		price						bigint									NOT NULL,
+		factorId					bigint									NOT NULL
+			CONSTRAINT FK_Payments_FactorId
+				FOREIGN KEY REFERENCES Factors(id),
+		paymentStatusId				int										NOT NULL
+			CONSTRAINT FK_Payments_PaymentStatusId
+				FOREIGN KEY REFERENCES PaymentStatuses(id),
+		paymentToken				nvarchar(256)							NULL,
+		paymentResult				nvarchar(max)							NULL,
+		paymentReciept				nvarchar(256)							NULL,
+		createdAt					datetimeoffset							NOT NULL,
+		updatedAt					datetimeoffset							NOT NULL,
+	);
+
+	INSERT INTO Migrations(version, createdAt, updatedAt)
+	SELECT 'payments-v1', GETDATE(), GETDATE()
+END
+
+GO
 

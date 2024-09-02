@@ -1,0 +1,71 @@
+import * as path from 'path';
+import * as fs from 'fs';
+import * as crypto from 'crypto';
+import { Injectable } from '@nestjs/common';
+import { AuthenticationEnvelopeInterface } from './interface';
+
+@Injectable()
+export class IranKishService {
+  private readonly PUBLIC_KEY = fs.readFileSync(
+    path.resolve(
+      path.join(
+        __dirname,
+        '../../../apps/neka/src/util/irankish/publicKey.txt',
+      ),
+    ),
+    'utf8',
+  );
+  constructor() {}
+
+  private padLeftWithZero(size: number, number: number): string {
+    return number.toString().padStart(size, '0');
+  }
+
+  private aesEncrypt(inputStr) {
+    const aesSecretKey = crypto.randomBytes(16);
+    const aesInitialVector = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(
+      'aes-128-cbc',
+      Buffer.from(aesSecretKey),
+      aesInitialVector,
+    );
+    const aesEncrypted = Buffer.concat([
+      cipher.update(Buffer.from(inputStr, 'hex')),
+      cipher.final(),
+    ]);
+    return { aesSecretKey, aesInitialVector, aesEncrypted };
+  }
+
+  private rsaEncrypt(rsaInput) {
+    return crypto.publicEncrypt(
+      { key: this.PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PADDING },
+      Buffer.from(rsaInput),
+    );
+  }
+
+  generateAuthenticationEnvelope(
+    amount,
+    terminalId,
+    passPhrase,
+  ): AuthenticationEnvelopeInterface {
+    const zeroPadAmount = this.padLeftWithZero(12, amount);
+    const inputStr = `${terminalId}${passPhrase}${zeroPadAmount}00`;
+
+    const { aesSecretKey, aesInitialVector, aesEncrypted } =
+      this.aesEncrypt(inputStr);
+
+    const aesEncryptedHash = crypto
+      .createHash('sha256')
+      .update(aesEncrypted)
+      .digest();
+
+    const rsaEncrypted = this.rsaEncrypt(
+      Buffer.concat([aesSecretKey, aesEncryptedHash]),
+    );
+
+    return {
+      data: rsaEncrypted.toString('hex'),
+      iv: aesInitialVector.toString('hex'),
+    };
+  }
+}

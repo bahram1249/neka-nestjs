@@ -3,9 +3,20 @@ import { PurchaseService } from './purchase-service.service';
 import { PurchaseServiceController } from './purchase-service.controller';
 import { TerminalModule } from '../terminal/terminal.module';
 import { DeltasibPurchaseModule } from '../util/deltasib-purchase/deltasib-purchase.module';
+import { DeltasibUserModule } from '../util/deltasib-user/deltasib-user.module';
+import { DeltasibServiceModule } from '../util/deltasib-service/deltasib-service.module';
+import { FactorModule } from '../factor/factor.module';
+import { IranKishPaymentModule } from '../payment/irankish-payment/irankish-payment.module';
 
 @Module({
-  imports: [DeltasibPurchaseModule, TerminalModule],
+  imports: [
+    DeltasibPurchaseModule,
+    DeltasibUserModule,
+    DeltasibServiceModule,
+    TerminalModule,
+    FactorModule,
+    IranKishPaymentModule,
+  ],
   controllers: [PurchaseServiceController],
   providers: [PurchaseService],
   exports: [PurchaseService],
