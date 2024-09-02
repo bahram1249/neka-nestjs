@@ -13,7 +13,7 @@ export class DeltasibUserService {
 
   async getUserByTerminalSim(
     terminalSim: string,
-  ): Promise<DeltasibUserResultInterface[]> {
+  ): Promise<DeltasibUserResultInterface> {
     const token = await this.deltasibTokenService.getToken();
     const response = await axios.get(
       `https://185.126.8.124:1043/1.0/user/?Action=list&Username=${terminalSim}`,
@@ -26,12 +26,14 @@ export class DeltasibUserService {
       },
     );
     const result = response.data as DeltasibUserResponseInterface[];
-    return result.map((x) => ({
-      userId: x.user_id,
-      username: x.username,
-      name: x.name,
-      family: x.family,
-      address: x.address,
-    }));
+    return result.length > 0
+      ? result.map((x) => ({
+          userId: x.user_id,
+          username: x.username,
+          name: x.name,
+          family: x.family,
+          address: x.address,
+        }))[0]
+      : null;
   }
 }
