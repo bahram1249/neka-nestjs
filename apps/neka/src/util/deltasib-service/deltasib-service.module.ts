@@ -7,4 +7,4 @@ import { DeltasibTokenModule } from '../deltasib-token/deltasib-token.module';
   providers: [DeltasibServiceService],
   exports: [DeltasibServiceService],
 })
-export class DeltasibUserModule {}
+export class DeltasibServiceModule {}

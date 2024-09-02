@@ -9,6 +9,7 @@ import { LoginModule } from './login/login.module';
 import { TerminalModule } from './terminal/terminal.module';
 import { CreditInfoModule } from './credit-info/credit-info.module';
 import { PurchaseServiceModule } from './purchase-service/purchase-service.module';
+import { ServiceProductModule } from './service-product/service-product.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PurchaseServiceModule } from './purchase-service/purchase-service.modul
     TerminalModule,
     CreditInfoModule,
     PurchaseServiceModule,
+    ServiceProductModule,
   ],
 })
 export class NekaModule implements NestModule {
