@@ -8,7 +8,7 @@ import { WinstonLog } from './models/core/winstonlog.entity';
 import { FactorStatus } from './models/neka/factor-status.entity';
 import { Factor } from './models/neka/factor.entity';
 import { PaymentStatus } from './models/neka/payment-status.entity';
-import { Payment } from './models/neka/payment';
+import { Payment } from './models/neka/payment.entity';
 
 @Module({
   imports: [

@@ -72,4 +72,36 @@ export class Payment extends Model {
     allowNull: true,
   })
   paymentReciept?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  retrievalReferenceNumber?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  systemTraceAuditNumber?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  clientRequestId?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  responseCode?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  merchantId?: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  terminalId?: string;
 }

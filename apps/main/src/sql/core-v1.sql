@@ -180,6 +180,12 @@ BEGIN
 		paymentToken				nvarchar(256)							NULL,
 		paymentResult				nvarchar(max)							NULL,
 		paymentReciept				nvarchar(256)							NULL,
+		retrievalReferenceNumber	nvarchar(256)							NULL,
+		systemTraceAuditNumber		nvarchar(256)							NULL,
+		clientRequestId				nvarchar(256)							NULL,
+		responseCode				nvarchar(25)							NULL,
+		merchantId					nvarchar(256)							NULL,
+		terminalId					nvarchar(256)							NULL,
 		createdAt					datetimeoffset							NOT NULL,
 		updatedAt					datetimeoffset							NOT NULL,
 	);

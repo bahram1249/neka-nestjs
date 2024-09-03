@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  RequestMethod,
 } from '@nestjs/common';
 import { IUser } from '@rahino/auth/interface';
 import { TerminalService } from '../terminal/terminal.service';
@@ -70,10 +71,15 @@ export class PurchaseService {
       service,
     );
 
-    await this.irankishPaymentService.generatePaymentFromFactor(factor);
+    const payment =
+      await this.irankishPaymentService.generatePaymentFromFactor(factor);
     // create record
     return {
-      result: 'ok',
+      result: {
+        redirectUrl: '/iuiv3/IPG/Index/',
+        requestBody: '',
+        method: 'POST',
+      },
     };
   }
 }

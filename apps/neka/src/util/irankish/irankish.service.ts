@@ -2,10 +2,16 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
-import { AuthenticationEnvelopeInterface } from './interface';
+import {
+  AuthenticationEnvelopeInterface,
+  RequestPaymentResponseInterface,
+} from './interface';
+import { RequestPaymentDto } from './dto';
+import axios from 'axios';
 
 @Injectable()
 export class IranKishService {
+  private readonly baseUrl = 'https://ikc.shaparak.ir/';
   private readonly PUBLIC_KEY = fs.readFileSync(
     path.resolve(
       path.join(
@@ -44,11 +50,11 @@ export class IranKishService {
   }
 
   generateAuthenticationEnvelope(
-    amount,
-    terminalId,
-    passPhrase,
+    amount: bigint,
+    terminalId: string,
+    passPhrase: string,
   ): AuthenticationEnvelopeInterface {
-    const zeroPadAmount = this.padLeftWithZero(12, amount);
+    const zeroPadAmount = this.padLeftWithZero(12, Number(amount));
     const inputStr = `${terminalId}${passPhrase}${zeroPadAmount}00`;
 
     const { aesSecretKey, aesInitialVector, aesEncrypted } =
@@ -67,5 +73,13 @@ export class IranKishService {
       data: rsaEncrypted.toString('hex'),
       iv: aesInitialVector.toString('hex'),
     };
+  }
+
+  async requestPayment(
+    data: RequestPaymentDto,
+  ): Promise<RequestPaymentResponseInterface> {
+    let requestUrl = this.baseUrl + 'api/v3/tokenization/make';
+    const response = await axios.post(requestUrl, data);
+    return response.data as RequestPaymentResponseInterface;
   }
 }
