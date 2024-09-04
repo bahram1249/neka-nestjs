@@ -7,22 +7,31 @@ import { PaymentStatusEnum } from '@rahino/neka/helper/enum';
 import { TransactionTypeEnum } from '@rahino/neka/util/irankish/enum';
 import { RequestInterface } from '@rahino/neka/util/irankish/interface';
 import { IranKishService } from '@rahino/neka/util/irankish/irankish.service';
+import ShortUniqueId from 'short-unique-id';
+import { VerifyDto } from './dto';
+import { QueryOptionsBuilder } from '@rahino/query-filter/sequelize-query-builder';
+import { FactorService } from '@rahino/neka/factor/factor.service';
+import { Response } from 'express';
 
 @Injectable()
 export class IranKishPaymentService {
+  private frontEndUrl: string;
   constructor(
     private readonly irankishService: IranKishService,
+    private readonly factorService: FactorService,
     private readonly config: ConfigService,
     @InjectModel(Payment)
     private readonly paymentRepostiory: typeof Payment,
-  ) {}
+  ) {
+    this.frontEndUrl = this.config.get<string>('BASE_FRONT_URL');
+  }
 
   async generatePaymentFromFactor(factor: Factor): Promise<Payment> {
     const terminalId = this.config.get<string>('IranKishTerminalId');
     const passPhrase = this.config.get<string>('IranKishPassPhrase');
     const merchantId = this.config.get<string>('IranKishMerchantId');
     const baseUrl = this.config.get<string>('BASE_URL');
-
+    const { randomUUID } = new ShortUniqueId({ length: 10 });
     // authentication
     const authenticationEnvelope =
       this.irankishService.generateAuthenticationEnvelope(
@@ -38,17 +47,17 @@ export class IranKishPaymentService {
       requestTimestamp: new Date().getTime(),
       terminalId: terminalId,
       transactionType: TransactionTypeEnum.purchase,
-      requestId: new Date().getTime().toString(),
-      revertUri: baseUrl + '/v1/api/neka/payments/irankish/confirm',
+      requestId: randomUUID(),
+      revertUri: baseUrl + '/v1/api/neka/payments/irankish/verify',
     };
 
     // request
-    const requestPaymentResponse = await this.irankishService.requestPayment({
+    const response = await this.irankishService.requestPayment({
       authenticationEnvelope: authenticationEnvelope,
       request: request,
     });
-    if (!requestPaymentResponse.status) {
-      throw new BadRequestException(requestPaymentResponse.description);
+    if (!response.status) {
+      throw new BadRequestException(response.description);
     }
 
     const payment = await this.paymentRepostiory.create({
@@ -58,13 +67,57 @@ export class IranKishPaymentService {
       price: factor.price,
       factorId: factor.id,
       paymentStatusId: PaymentStatusEnum.unpaid,
-      paymentToken: requestPaymentResponse.result.token,
-      responseCode: requestPaymentResponse.responseCode,
+      paymentToken: response.result.token,
+      responseCode: response.responseCode,
       merchantId: request.acceptorId,
       clientRequestId: request.requestId,
       terminalId: terminalId,
     });
 
     return payment;
+  }
+
+  async verify(res: Response, dto: VerifyDto) {
+    let payment = await this.paymentRepostiory.findOne(
+      new QueryOptionsBuilder()
+        .filter({ paymentToken: dto.token })
+        .filter({ paymentStatusId: PaymentStatusEnum.unpaid })
+        .build(),
+    );
+    if (!payment) {
+      throw new BadRequestException('invalid data');
+    }
+    if (payment.price.toString() != dto.amount) {
+      throw new BadRequestException('invalid data');
+    }
+    if (payment.clientRequestId != dto.RequestId) {
+      throw new BadRequestException('invalid data');
+    }
+    if (payment.merchantId != dto.acceptorId) {
+      throw new BadRequestException('invalid data');
+    }
+
+    const verify = await this.irankishService.verify({
+      retrievalReferenceNumber: dto.retrievalReferenceNumber,
+      systemTraceAuditNumber: dto.systemTraceAuditNumber,
+      terminalId: payment.terminalId,
+      tokenIdentity: payment.paymentToken,
+    });
+
+    if (!verify.status) {
+      payment.paymentStatusId = PaymentStatusEnum.failed;
+      payment.paymentResult = `${verify.description}(${verify.responseCode})`;
+      payment = await payment.save();
+      return res.redirect(301, this.frontEndUrl + `/payments/${payment.id}`);
+    }
+
+    payment.paymentStatusId = PaymentStatusEnum.success;
+    payment.retrievalReferenceNumber = dto.retrievalReferenceNumber;
+    payment.systemTraceAuditNumber = dto.systemTraceAuditNumber;
+    payment.paymentResult = `${verify.description}(${verify.responseCode})`;
+    await this.factorService.finnalStatus(payment.factorId);
+    payment = await payment.save();
+
+    return res.redirect(301, this.frontEndUrl + `/payments/${payment.id}`);
   }
 }

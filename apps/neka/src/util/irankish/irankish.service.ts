@@ -5,9 +5,11 @@ import { Injectable } from '@nestjs/common';
 import {
   AuthenticationEnvelopeInterface,
   RequestPaymentResponseInterface,
+  VerifyPaymentResponseInterface,
 } from './interface';
-import { RequestPaymentDto } from './dto';
+import { RequestPaymentDto, VerifyDto } from './dto';
 import axios from 'axios';
+import * as _ from 'lodash';
 
 @Injectable()
 export class IranKishService {
@@ -78,8 +80,14 @@ export class IranKishService {
   async requestPayment(
     data: RequestPaymentDto,
   ): Promise<RequestPaymentResponseInterface> {
-    let requestUrl = this.baseUrl + 'api/v3/tokenization/make';
+    const requestUrl = this.baseUrl + 'api/v3/tokenization/make';
     const response = await axios.post(requestUrl, data);
     return response.data as RequestPaymentResponseInterface;
+  }
+
+  async verify(data: VerifyDto): Promise<VerifyPaymentResponseInterface> {
+    const requestUrl = this.baseUrl + 'api/v3/confirmation/purchase';
+    const response = await axios.post(requestUrl, data);
+    return response.data as VerifyPaymentResponseInterface;
   }
 }

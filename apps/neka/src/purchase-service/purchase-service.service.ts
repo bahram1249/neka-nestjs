@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  RequestMethod,
 } from '@nestjs/common';
 import { IUser } from '@rahino/auth/interface';
 import { TerminalService } from '../terminal/terminal.service';
@@ -13,9 +12,11 @@ import { DeltasibUserService } from '../util/deltasib-user/deltasib-user.service
 import { DeltasibServiceService } from '../util/deltasib-service/deltasib-service.service';
 import { FactorService } from '../factor/factor.service';
 import { IranKishPaymentService } from '../payment/irankish-payment/irankish-payment.service';
+import * as _ from 'lodash';
 
 @Injectable()
 export class PurchaseService {
+  private readonly iranKishBaseUrl = 'https://ikc.shaparak.ir';
   constructor(
     private readonly terminalService: TerminalService,
     private readonly deltasibPurchaseService: DeltasibPurchaseService,
@@ -76,8 +77,10 @@ export class PurchaseService {
     // create record
     return {
       result: {
-        redirectUrl: '/iuiv3/IPG/Index/',
-        requestBody: '',
+        redirectUrl: this.iranKishBaseUrl + '/iuiv3/IPG/Index/',
+        requestBody: {
+          tokenIdentity: payment.paymentToken,
+        },
         method: 'POST',
       },
     };
