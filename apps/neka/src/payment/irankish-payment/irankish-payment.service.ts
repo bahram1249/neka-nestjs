@@ -109,7 +109,10 @@ export class IranKishPaymentService {
       payment.paymentStatusId = PaymentStatusEnum.failed;
       payment.paymentResult = `${verify.description}(${verify.responseCode})`;
       payment = await payment.save();
-      return res.redirect(301, this.frontEndUrl + `/payments/${payment.id}`);
+      return res.redirect(
+        301,
+        this.frontEndUrl + `/transactions/${payment.id}`,
+      );
     }
 
     payment.paymentStatusId = PaymentStatusEnum.success;
@@ -119,6 +122,6 @@ export class IranKishPaymentService {
     await this.factorService.finnalStatus(payment.factorId);
     payment = await payment.save();
 
-    return res.redirect(301, this.frontEndUrl + `/payments/${payment.id}`);
+    return res.redirect(301, this.frontEndUrl + `/transactions/${payment.id}`);
   }
 }

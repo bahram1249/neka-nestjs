@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from '@rahino/auth/interface';
+import { SignTokenInterface } from './interface';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,7 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
 
-  public async signToken(user: IUser): Promise<{ access_token: string }> {
+  public async signToken(user: IUser): Promise<SignTokenInterface> {
     const secret = this.config.get<string>('JWT_SECRET');
     const tokenExpiration = this.config.get<string>('TOKEN_EXPIRATION');
 
@@ -21,6 +22,8 @@ export class AuthService {
 
     return {
       access_token: token,
+      firstname: user.firstname,
+      lastname: user.lastname,
     };
   }
 }

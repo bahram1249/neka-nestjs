@@ -11,6 +11,7 @@ import { CreditInfoModule } from './credit-info/credit-info.module';
 import { PurchaseServiceModule } from './purchase-service/purchase-service.module';
 import { ServiceProductModule } from './service-product/service-product.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { IranKishPaymentModule } from './payment/irankish-payment/irankish-payment.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TransactionModule } from './transaction/transaction.module';
     PurchaseServiceModule,
     ServiceProductModule,
     TransactionModule,
+    IranKishPaymentModule,
   ],
 })
 export class NekaModule implements NestModule {
