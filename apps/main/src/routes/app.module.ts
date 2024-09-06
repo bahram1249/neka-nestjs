@@ -8,15 +8,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@rahino/database';
 import helmet from 'helmet';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { CacheModule } from '@nestjs/cache-manager';
 import { HttpExceptionFilter } from '@rahino/http-exception-filter';
 import { DBLogger, DBLoggerModule } from '@rahino/logger';
 import { AutomapperModule } from 'automapper-nestjs';
 import { classes } from 'automapper-classes';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
 import { DynamicProviderModule } from '../dynamic-provider/dynamic-provider.module';
 import { ThrottlerBehindProxyGuard } from '@rahino/commontools/guard';
 import { APP_GUARD } from '@nestjs/core';
@@ -29,7 +26,6 @@ import {
 } from 'nestjs-i18n';
 import * as path from 'path';
 import { AppLanguageResolver } from '../i18nResolver/AppLanguageResolver';
-import { KnexModule } from 'nestjs-knex';
 import { useContainer } from 'class-validator';
 const cluster = require('cluster');
 import * as os from 'os';
@@ -66,22 +62,6 @@ import { NekaModule } from '@rahino/neka';
       ],
     }),
     DatabaseModule,
-    KnexModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
-        config: {
-          client: 'mssql',
-          useNullAsDefault: true,
-          connection: {
-            host: config.get<string>('DB_HOST'),
-            port: Number(config.get<number>('DB_PORT')),
-            user: config.get<string>('DB_USER'),
-            password: config.get<string>('DB_PASS'),
-            database: config.get<string>('DB_NAME_DEVELOPMENT'),
-          },
-        },
-      }),
-      inject: [ConfigService],
-    }),
     DBLoggerModule,
     AutomapperModule.forRoot({
       strategyInitializer: classes(),
@@ -105,9 +85,6 @@ import { NekaModule } from '@rahino/neka';
         __dirname,
         '../../../apps/main/src/generated/i18n.generated.ts',
       ),
-    }),
-    DevtoolsModule.register({
-      http: process.env.NODE_ENV !== 'production',
     }),
   ],
   providers: [
@@ -136,10 +113,6 @@ export class AppModule implements NestModule {
     });
 
     app.useGlobalPipes(
-      // new ValidationPipe({
-      //   whitelist: true,
-      //   transform: true,
-      // }),
       new I18nValidationPipe({
         transform: true,
         whitelist: true,
@@ -148,12 +121,7 @@ export class AppModule implements NestModule {
 
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
-    app.useGlobalFilters(
-      //new I18nValidationExceptionFilter(),
-      //new
-      //new CustomI18nValidationExceptionFilter(),
-      new HttpExceptionFilter(this.logger),
-    );
+    app.useGlobalFilters(new HttpExceptionFilter(this.logger));
 
     app.use(
       helmet({
@@ -161,14 +129,6 @@ export class AppModule implements NestModule {
       }),
     );
     app.enableCors({});
-    app.use(cookieParser());
-    app.use(
-      session({
-        secret: this.config.get('SESSION_KEY'),
-        resave: false,
-        saveUninitialized: false,
-      }),
-    );
 
     const projectName = this.config.get<string>('PROJECT_NAME');
     if (projectName == 'Neka') {
