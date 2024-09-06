@@ -4,7 +4,7 @@ export interface RequestInterface {
   transactionType: TransactionTypeEnum;
   terminalId: string;
   acceptorId: string;
-  amount: bigint;
+  amount: number;
   revertUri: string;
   requestId: string;
   requestTimestamp: number;

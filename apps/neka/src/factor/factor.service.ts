@@ -8,11 +8,13 @@ import { DeltasibUserResultInterface } from '../util/deltasib-user/interface';
 import { FactorStatusEnum } from '../helper/enum';
 import { QueryOptionsBuilder } from '@rahino/query-filter/sequelize-query-builder';
 import { Op } from 'sequelize';
+import { DeltasibPurchaseService } from '../util/deltasib-purchase/deltasib-purchase.service';
 
 @Injectable()
 export class FactorService {
   constructor(
     @InjectModel(Factor) private readonly repository: typeof Factor,
+    private readonly deltasibPurchaseService: DeltasibPurchaseService,
   ) {}
 
   async generate(
@@ -50,6 +52,12 @@ export class FactorService {
       throw new BadRequestException("factor couldn't find");
     }
     factor.factorStatusId = FactorStatusEnum.paid;
+    await this.deltasibPurchaseService.add({
+      Action: 'add',
+      Service_Id: factor.deltasibServiceId,
+      User_Id: factor.deltasibUserId,
+      PayPlan: 'PostPaid',
+    });
     return await factor.save();
   }
 }

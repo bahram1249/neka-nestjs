@@ -52,7 +52,7 @@ export class IranKishService {
   }
 
   generateAuthenticationEnvelope(
-    amount: bigint,
+    amount: number,
     terminalId: string,
     passPhrase: string,
   ): AuthenticationEnvelopeInterface {
@@ -81,7 +81,11 @@ export class IranKishService {
     data: RequestPaymentDto,
   ): Promise<RequestPaymentResponseInterface> {
     const requestUrl = this.baseUrl + 'api/v3/tokenization/make';
-    const response = await axios.post(requestUrl, data);
+    const response = await axios.post(requestUrl, data, {
+      headers: {
+        Encoding: 'UTF-8',
+      },
+    });
     return response.data as RequestPaymentResponseInterface;
   }
 

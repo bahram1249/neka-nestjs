@@ -35,7 +35,7 @@ export class IranKishPaymentService {
     // authentication
     const authenticationEnvelope =
       this.irankishService.generateAuthenticationEnvelope(
-        factor.price,
+        Number(factor.price),
         terminalId,
         passPhrase,
       );
@@ -43,8 +43,8 @@ export class IranKishPaymentService {
     // request body
     const request: RequestInterface = {
       acceptorId: merchantId,
-      amount: factor.price,
-      requestTimestamp: new Date().getTime(),
+      amount: Number(factor.price),
+      requestTimestamp: Math.round(new Date().getTime() / 1000),
       terminalId: terminalId,
       transactionType: TransactionTypeEnum.purchase,
       requestId: randomUUID(),
@@ -56,6 +56,7 @@ export class IranKishPaymentService {
       authenticationEnvelope: authenticationEnvelope,
       request: request,
     });
+
     if (!response.status) {
       throw new BadRequestException(response.description);
     }
