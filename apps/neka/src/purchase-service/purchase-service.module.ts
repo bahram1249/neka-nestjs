@@ -7,9 +7,11 @@ import { DeltasibUserModule } from '../util/deltasib-user/deltasib-user.module';
 import { DeltasibServiceModule } from '../util/deltasib-service/deltasib-service.module';
 import { FactorModule } from '../factor/factor.module';
 import { IranKishPaymentModule } from '../payment/irankish-payment/irankish-payment.module';
+import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
   imports: [
+    SequelizeModule,
     DeltasibPurchaseModule,
     DeltasibUserModule,
     DeltasibServiceModule,

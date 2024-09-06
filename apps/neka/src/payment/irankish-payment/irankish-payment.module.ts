@@ -11,6 +11,7 @@ import { IranKishPaymentController } from './Irankish-payment.controller';
     IranKishModule,
     FactorModule,
     SequelizeModule.forFeature([Payment]),
+    SequelizeModule,
   ],
   controllers: [IranKishPaymentController],
   providers: [IranKishPaymentService],

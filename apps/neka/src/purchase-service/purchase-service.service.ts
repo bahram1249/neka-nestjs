@@ -13,6 +13,9 @@ import { DeltasibServiceService } from '../util/deltasib-service/deltasib-servic
 import { FactorService } from '../factor/factor.service';
 import { IranKishPaymentService } from '../payment/irankish-payment/irankish-payment.service';
 import * as _ from 'lodash';
+import { Sequelize } from 'sequelize-typescript';
+import { InjectConnection } from '@nestjs/sequelize';
+import { Transaction } from 'sequelize';
 
 @Injectable()
 export class PurchaseService {
@@ -24,6 +27,8 @@ export class PurchaseService {
     private readonly deltasibServiceService: DeltasibServiceService,
     private readonly factorService: FactorService,
     private readonly irankishPaymentService: IranKishPaymentService,
+    @InjectConnection()
+    private readonly sequelize: Sequelize,
   ) {}
 
   async getByTerminalSim(terminalSim: string, user: IUser) {
@@ -64,22 +69,39 @@ export class PurchaseService {
       throw new BadRequestException("the service couldn't find!");
     }
 
-    // generate factor
-    const factor = await this.factorService.generate(
-      user,
-      deltasibUser,
-      terminal,
-      service,
-    );
+    // beign transaction
+    const transaction = await this.sequelize.transaction({
+      isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
+    });
+    let paymentToken = '';
+    try {
+      // generate factor
+      const factor = await this.factorService.generate(
+        user,
+        deltasibUser,
+        terminal,
+        service,
+        transaction,
+      );
 
-    const payment =
-      await this.irankishPaymentService.generatePaymentFromFactor(factor);
-    // create record
+      // generate payment
+      const payment =
+        await this.irankishPaymentService.generatePaymentFromFactor(
+          factor,
+          transaction,
+        );
+      paymentToken = payment.paymentToken;
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw new InternalServerErrorException(error.message);
+    }
+
     return {
       result: {
         redirectUrl: this.iranKishBaseUrl + '/iuiv3/IPG/Index/',
         requestBody: {
-          tokenIdentity: payment.paymentToken,
+          tokenIdentity: paymentToken,
         },
         method: 'POST',
       },
