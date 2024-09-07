@@ -75,13 +75,16 @@ export class FactorService {
       PayPlan: 'PostPaid',
     });
 
-    const updated = await Factor.update(_.omit(factor, ['id']), {
-      transaction: transaction,
-      returning: true,
-      where: {
-        id: factor.id,
+    const updated = await Factor.update(
+      _.omit(JSON.parse(JSON.stringify(factor)), ['id']),
+      {
+        transaction: transaction,
+        returning: true,
+        where: {
+          id: factor.id,
+        },
       },
-    });
+    );
     return updated[1][0];
   }
 
@@ -110,7 +113,7 @@ export class FactorService {
         },
       ])
       .limit(filter.limit)
-      .offset(filter.limit)
+      .offset(filter.offset)
       .order({ orderBy: filter.orderBy, sortOrder: filter.sortOrder });
     return {
       result: await this.repository.findAll(queryBuilder.build()),

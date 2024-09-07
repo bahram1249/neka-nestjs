@@ -18,6 +18,7 @@ import { FactorService } from '@rahino/neka/factor/factor.service';
 import { Response } from 'express';
 import { Sequelize, Transaction } from 'sequelize';
 import * as _ from 'lodash';
+import { CompressionTypes } from '@nestjs/microservices/external/kafka.interface';
 
 @Injectable()
 export class IranKishPaymentService {
@@ -113,7 +114,7 @@ export class IranKishPaymentService {
       if (payment.price.toString() != dto.amount) {
         throw new BadRequestException('invalid data');
       }
-      if (payment.clientRequestId != dto.RequestId) {
+      if (payment.clientRequestId != dto.requestId) {
         throw new BadRequestException('invalid data');
       }
       if (payment.merchantId != dto.acceptorId) {
@@ -130,14 +131,20 @@ export class IranKishPaymentService {
       if (!verify.status) {
         payment.paymentStatusId = PaymentStatusEnum.failed;
         payment.paymentResult = `${verify.description}(${verify.responseCode})`;
-
-        const updated = await Payment.update(_.omit(payment, ['id']), {
-          where: {
-            id: payment.id,
+        const updated = await Payment.update(
+          _.omit(JSON.parse(JSON.stringify(payment)), [
+            'id',
+            'createdAt',
+            'updatedAt',
+          ]),
+          {
+            where: {
+              id: payment.id,
+            },
+            transaction: transaction,
+            returning: true,
           },
-          transaction: transaction,
-          returning: true,
-        })[1][0];
+        );
         payment = updated[1][0];
         await transaction.commit();
 
@@ -154,11 +161,14 @@ export class IranKishPaymentService {
 
       await this.factorService.finnalStatus(payment.factorId, transaction);
 
-      const updated = await Payment.update(_.omit(payment, ['id']), {
-        where: { id: payment.id },
-        transaction: transaction,
-        returning: true,
-      });
+      const updated = await Payment.update(
+        _.omit(JSON.parse(JSON.stringify(payment)), ['id']),
+        {
+          where: { id: payment.id },
+          transaction: transaction,
+          returning: true,
+        },
+      );
       payment = updated[1][0];
 
       await transaction.commit();

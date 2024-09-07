@@ -34,7 +34,7 @@ export class TransactionService {
         },
       ])
       .limit(filter.limit)
-      .offset(filter.limit)
+      .offset(filter.offset)
       .order({ orderBy: filter.orderBy, sortOrder: filter.sortOrder });
     return {
       result: await this.repository.findAll(queryBuilder.build()),

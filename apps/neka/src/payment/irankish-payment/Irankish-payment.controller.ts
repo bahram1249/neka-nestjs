@@ -9,6 +9,7 @@ import {
 import { IranKishPaymentService } from './irankish-payment.service';
 import { VerifyDto } from './dto';
 import { Response } from 'express';
+import { ApiConsumes } from '@nestjs/swagger';
 
 @Controller({
   path: '/api/neka/payments/irankish',
@@ -19,6 +20,7 @@ export class IranKishPaymentController {
 
   @Post('/verify')
   @HttpCode(HttpStatus.OK)
+  @ApiConsumes('multipart/form-data')
   async verify(@Res() res: Response, @Body() dto: VerifyDto) {
     return await this.service.verify(res, dto);
   }
