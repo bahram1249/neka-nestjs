@@ -12,6 +12,7 @@ import { PurchaseServiceModule } from './purchase-service/purchase-service.modul
 import { ServiceProductModule } from './service-product/service-product.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { IranKishPaymentModule } from './payment/irankish-payment/irankish-payment.module';
+import { FactorModule } from './factor/factor.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { IranKishPaymentModule } from './payment/irankish-payment/irankish-payme
     PurchaseServiceModule,
     ServiceProductModule,
     TransactionModule,
+    FactorModule,
     IranKishPaymentModule,
   ],
 })

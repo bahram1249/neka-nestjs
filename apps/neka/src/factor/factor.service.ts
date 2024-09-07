@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { IUser } from '@rahino/auth/interface';
 import { Factor } from '@rahino/database/models/neka/factor.entity';
@@ -10,6 +14,8 @@ import { QueryOptionsBuilder } from '@rahino/query-filter/sequelize-query-builde
 import { Op, Transaction } from 'sequelize';
 import { DeltasibPurchaseService } from '../util/deltasib-purchase/deltasib-purchase.service';
 import * as _ from 'lodash';
+import { ListFilter } from '@rahino/query-filter';
+import { FactorStatus } from '@rahino/database/models/neka/factor-status.entity';
 
 @Injectable()
 export class FactorService {
@@ -77,5 +83,73 @@ export class FactorService {
       },
     });
     return updated[1][0];
+  }
+
+  async getAll(user: IUser, filter: ListFilter) {
+    let queryBuilder = new QueryOptionsBuilder().filter({ crmUserId: user.id });
+    const count = await this.repository.count(queryBuilder.build());
+    queryBuilder = queryBuilder
+      .attributes([
+        'id',
+        'firstname',
+        'lastname',
+        'terminalSim',
+        'price',
+        'deltasibServiceId',
+        'deltasibServiceName',
+        'deltasibServiceDescription',
+        'factorStatusId',
+        'createdAt',
+        'updatedAt',
+      ])
+      .include([
+        {
+          attributes: ['id', 'title'],
+          model: FactorStatus,
+          as: 'factorStatus',
+        },
+      ])
+      .limit(filter.limit)
+      .offset(filter.limit)
+      .order({ orderBy: filter.orderBy, sortOrder: filter.sortOrder });
+    return {
+      result: await this.repository.findAll(queryBuilder.build()),
+      total: count,
+    };
+  }
+
+  async getOne(user: IUser, factorId: bigint) {
+    const item = await this.repository.findOne(
+      new QueryOptionsBuilder()
+        .attributes([
+          'id',
+          'firstname',
+          'lastname',
+          'terminalSim',
+          'price',
+          'deltasibServiceId',
+          'deltasibServiceName',
+          'deltasibServiceDescription',
+          'factorStatusId',
+          'createdAt',
+          'updatedAt',
+        ])
+        .include([
+          {
+            attributes: ['id', 'title'],
+            model: FactorStatus,
+            as: 'factorStatus',
+          },
+        ])
+        .filter({ crmUserId: user.id })
+        .filter({ id: factorId })
+        .build(),
+    );
+    if (!item) {
+      throw new NotFoundException('the item with this given id not founded!');
+    }
+    return {
+      result: item,
+    };
   }
 }

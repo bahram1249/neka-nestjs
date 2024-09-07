@@ -14,18 +14,18 @@ import { GetUser } from '@rahino/auth/decorator';
 import { IUser } from '@rahino/auth/interface';
 import { JsonResponseTransformInterceptor } from '@rahino/response/interceptor';
 import { JwtGuard } from '@rahino/auth/guard';
-import { TransactionService } from './transaction.service';
 import { ListFilter } from '@rahino/query-filter';
+import { FactorService } from './factor.service';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
 @UseInterceptors(JsonResponseTransformInterceptor)
 @Controller({
-  path: '/api/neka/transactions',
+  path: '/api/neka/factors',
   version: ['1'],
 })
-export class TransactionController {
-  constructor(private service: TransactionService) {}
+export class FactorController {
+  constructor(private service: FactorService) {}
 
   @ApiQuery({
     name: 'filter',
@@ -41,7 +41,7 @@ export class TransactionController {
 
   @Get('/:id')
   @HttpCode(HttpStatus.OK)
-  async getOne(@GetUser() user: IUser, @Param('id') paymentId: bigint) {
-    return await this.service.getOne(user, paymentId);
+  async getOne(@GetUser() user: IUser, @Param('id') factorId: bigint) {
+    return await this.service.getOne(user, factorId);
   }
 }
