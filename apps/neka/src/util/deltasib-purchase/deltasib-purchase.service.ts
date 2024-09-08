@@ -53,7 +53,7 @@ export class DeltasibPurchaseService {
   async add(dto: PurchaseDto): Promise<DeltasibAddPurchaseResponseInterface> {
     const token = await this.deltasibTokenService.getToken();
     const response = await axios.post(
-      `'https://185.126.8.124:1043/1.0/user.service.base/`,
+      `https://185.126.8.124:1043/1.0/user.service.base/`,
       dto,
       {
         headers: {
