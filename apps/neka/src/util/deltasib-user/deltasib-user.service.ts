@@ -16,7 +16,7 @@ export class DeltasibUserService {
   ): Promise<DeltasibUserResultInterface> {
     const token = await this.deltasibTokenService.getToken();
     const response = await axios.get(
-      `https://185.126.8.124:1043/1.0/user/?Action=list&Username=${terminalSim}`,
+      `https://185.126.8.124:1043/1.0/user/?Action=list&Filter=Username='${terminalSim}'`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
