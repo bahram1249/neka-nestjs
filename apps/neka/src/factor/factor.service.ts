@@ -16,6 +16,7 @@ import { DeltasibPurchaseService } from '../util/deltasib-purchase/deltasib-purc
 import * as _ from 'lodash';
 import { ListFilter } from '@rahino/query-filter';
 import { FactorStatus } from '@rahino/database/models/neka/factor-status.entity';
+import { CrmProductResultInterface } from '../util/crm-product/interface';
 
 @Injectable()
 export class FactorService {
@@ -29,6 +30,7 @@ export class FactorService {
     deltasibUser: DeltasibUserResultInterface,
     terminal: DescribeCrmTerminalResultInterface,
     service: DeltasibServiceResultInterface,
+    crmProduct: CrmProductResultInterface,
     transaction?: Transaction,
   ) {
     return await this.repository.create(
@@ -43,6 +45,7 @@ export class FactorService {
         deltasibServiceName: service.serviceName,
         deltasibServiceDescription: service.description,
         factorStatusId: FactorStatusEnum.unpaid,
+        crmProductId: crmProduct.id,
       },
       {
         transaction: transaction,

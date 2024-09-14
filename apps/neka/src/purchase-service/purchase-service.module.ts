@@ -8,6 +8,7 @@ import { DeltasibServiceModule } from '../util/deltasib-service/deltasib-service
 import { FactorModule } from '../factor/factor.module';
 import { IranKishPaymentModule } from '../payment/irankish-payment/irankish-payment.module';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { CrmProductModule } from '../util/crm-product/crm-product.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
     DeltasibServiceModule,
     TerminalModule,
     FactorModule,
+    CrmProductModule,
     IranKishPaymentModule,
   ],
   controllers: [PurchaseServiceController],

@@ -127,6 +127,24 @@ END
 GO
 
 
+
+IF NOT EXISTS ((SELECT 1 FROM Migrations WHERE version = 'factors-v2' 
+					
+			))
+	AND EXISTS (
+		SELECT 1 FROM Settings WHERE ([key] = 'SITE_NAME' AND [value] IN ('neka'))
+	)
+BEGIN
+
+	ALTER Table Factors
+		ADD crmProductId nvarchar(256) null;
+
+	INSERT INTO Migrations(version, createdAt, updatedAt)
+	SELECT 'factors-v2', GETDATE(), GETDATE()
+END
+
+GO
+
 IF NOT EXISTS ((SELECT 1 FROM Migrations WHERE version = 'paymentstatuses-v1' 
 					
 			))

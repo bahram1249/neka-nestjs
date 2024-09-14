@@ -68,4 +68,9 @@ export class Factor extends Model {
     foreignKey: 'factorStatusId',
   })
   factorStatus?: FactorStatus;
+
+  @Column({
+    type: DataType.STRING,
+  })
+  crmProductId?: string;
 }

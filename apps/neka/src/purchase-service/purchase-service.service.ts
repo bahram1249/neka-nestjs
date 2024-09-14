@@ -16,6 +16,7 @@ import * as _ from 'lodash';
 import { Sequelize } from 'sequelize-typescript';
 import { InjectConnection } from '@nestjs/sequelize';
 import { Transaction } from 'sequelize';
+import { CrmProductService } from '../util/crm-product/crm-product.service';
 
 @Injectable()
 export class PurchaseService {
@@ -26,6 +27,7 @@ export class PurchaseService {
     private readonly deltasibUserService: DeltasibUserService,
     private readonly deltasibServiceService: DeltasibServiceService,
     private readonly factorService: FactorService,
+    private readonly crmProductService: CrmProductService,
     private readonly irankishPaymentService: IranKishPaymentService,
     @InjectConnection()
     private readonly sequelize: Sequelize,
@@ -69,6 +71,13 @@ export class PurchaseService {
       throw new BadRequestException("the service couldn't find!");
     }
 
+    const crmProduct = await this.crmProductService.findProduct(
+      service.serviceId,
+    );
+    if (!crmProduct) {
+      throw new InternalServerErrorException('the crm product id not founded!');
+    }
+
     // beign transaction
     const transaction = await this.sequelize.transaction({
       isolationLevel: Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED,
@@ -81,6 +90,7 @@ export class PurchaseService {
         deltasibUser,
         terminal,
         service,
+        crmProduct,
         transaction,
       );
 

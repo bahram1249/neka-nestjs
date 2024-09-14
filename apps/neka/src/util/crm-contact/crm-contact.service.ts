@@ -24,6 +24,6 @@ export class CrmContactService {
     if (!data.success) {
       throw new InternalServerErrorException('cannot get contacts');
     }
-    if (data) return data.result.length > 0 ? data.result[0] : null;
+    return data.result.length > 0 ? data.result[0] : null;
   }
 }
