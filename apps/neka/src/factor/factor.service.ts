@@ -17,12 +17,14 @@ import * as _ from 'lodash';
 import { ListFilter } from '@rahino/query-filter';
 import { FactorStatus } from '@rahino/database/models/neka/factor-status.entity';
 import { CrmProductResultInterface } from '../util/crm-product/interface';
+import { CrmFactorService } from '../util/crm-factor/crm-factor.service';
 
 @Injectable()
 export class FactorService {
   constructor(
     @InjectModel(Factor) private readonly repository: typeof Factor,
     private readonly deltasibPurchaseService: DeltasibPurchaseService,
+    private readonly crmFactorService: CrmFactorService,
   ) {}
 
   async generate(
@@ -71,6 +73,7 @@ export class FactorService {
 
     factor.factorStatusId = FactorStatusEnum.paid;
 
+    await this.crmFactorService.generateFactor(factor);
     await this.deltasibPurchaseService.add({
       Action: 'add',
       Service_Id: factor.deltasibServiceId,
