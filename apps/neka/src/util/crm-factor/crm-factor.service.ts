@@ -13,9 +13,9 @@ export class CrmFactorService {
     var data = {
       operation: 'create',
       sessionName: session.sessionName,
-      elementType: 'invoice',
+      elementType: 'Invoice',
       element: {
-        subject: 'خرید ' + factor.deltasibServiceDescription,
+        subject: factor.deltasibServiceName,
         createdtime: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss'),
         duedate: formatDate(new Date(), 'yyyy-MM-dd'),
         contact_id: factor.crmUserId,
@@ -33,14 +33,17 @@ export class CrmFactorService {
         assigned_user_id: '19x12',
       },
     };
-    console.log(JSON.stringify(data));
+    var form_data = new FormData();
+
+    for (var key in data) {
+      form_data.append(key, JSON.stringify(data[key]));
+    }
+
     const response = await axios.post(
       'https://neka.crm24.io/webservice.php',
-      data,
+      form_data,
       {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       },
     );
     console.log(response);
