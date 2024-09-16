@@ -13,7 +13,6 @@ import { ServiceProductModule } from './service-product/service-product.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { IranKishPaymentModule } from './payment/irankish-payment/irankish-payment.module';
 import { FactorModule } from './factor/factor.module';
-import { CrmFactorTestModule } from './crm-factor-test/crm-factor.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { CrmFactorTestModule } from './crm-factor-test/crm-factor.module';
     TransactionModule,
     FactorModule,
     IranKishPaymentModule,
-    CrmFactorTestModule,
   ],
 })
 export class NekaModule implements NestModule {
